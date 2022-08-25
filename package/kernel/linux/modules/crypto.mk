@@ -57,7 +57,7 @@ define KernelPackage/crypto-arc4
 	  CONFIG_CRYPTO_USER_API_ENABLE_OBSOLETE=y
   FILES:= \
 	  $(LINUX_DIR)/crypto/arc4.ko \
-	  $(LINUX_DIR)/lib/crypto/libarc4.ko
+	  $(LINUX_DIR)/lib/crypto/libarc4.ko@ge5.4
   AUTOLOAD:=$(call AutoLoad,09,arc4)
   $(call AddDepends/crypto)
 endef
@@ -287,7 +287,7 @@ define KernelPackage/crypto-ghash/arm-ce
   AUTOLOAD+=$(call AutoLoad,09,ghash-arm-ce)
 endef
 
-KernelPackage/crypto-ghash/imx6=$(KernelPackage/crypto-ghash/arm-ce)
+KernelPackage/crypto-ghash/imx=$(KernelPackage/crypto-ghash/arm-ce)
 KernelPackage/crypto-ghash/ipq40xx=$(KernelPackage/crypto-ghash/arm-ce)
 KernelPackage/crypto-ghash/mvebu/cortexa9=$(KernelPackage/crypto-ghash/arm-ce)
 
@@ -360,7 +360,7 @@ $(eval $(call KernelPackage,crypto-hw-geode))
 
 define KernelPackage/crypto-hw-hifn-795x
   TITLE:=HIFN 795x crypto accelerator
-  DEPENDS:=+kmod-random-core +kmod-crypto-manager
+  DEPENDS:=@PCI_SUPPORT +kmod-random-core +kmod-crypto-manager
   KCONFIG:= \
 	CONFIG_CRYPTO_HW=y \
 	CONFIG_CRYPTO_DEV_HIFN_795X \
@@ -445,28 +445,6 @@ define KernelPackage/crypto-kpp
 endef
 
 $(eval $(call KernelPackage,crypto-kpp))
-
-
-define KernelPackage/crypto-lib-blake2s
-  TITLE:=BLAKE2s hash function library
-  KCONFIG:=CONFIG_CRYPTO_LIB_BLAKE2S
-  HIDDEN:=1
-  FILES:= \
-	$(LINUX_DIR)/lib/crypto/libblake2s.ko \
-	$(LINUX_DIR)/lib/crypto/libblake2s-generic.ko
-  $(call AddDepends/crypto,+PACKAGE_kmod-crypto-hash:kmod-crypto-hash)
-endef
-
-define KernelPackage/crypto-lib-blake2s/config
-  imply PACKAGE_kmod-crypto-hash
-endef
-
-define KernelPackage/crypto-lib-blake2s/x86/64
-  KCONFIG+=CONFIG_CRYPTO_BLAKE2S_X86
-  FILES+=$(LINUX_DIR)/arch/x86/crypto/blake2s-x86_64.ko
-endef
-
-$(eval $(call KernelPackage,crypto-lib-blake2s))
 
 
 define KernelPackage/crypto-lib-chacha20
@@ -683,7 +661,7 @@ define KernelPackage/crypto-misc
 	CONFIG_CRYPTO_KHAZAD \
 	CONFIG_CRYPTO_SERPENT \
 	CONFIG_CRYPTO_TEA \
-	CONFIG_CRYPTO_TGR192 \
+	CONFIG_CRYPTO_TGR192@lt5.12 \
 	CONFIG_CRYPTO_TWOFISH \
 	CONFIG_CRYPTO_TWOFISH_COMMON \
 	CONFIG_CRYPTO_TWOFISH_586 \
@@ -696,7 +674,7 @@ define KernelPackage/crypto-misc
 	$(LINUX_DIR)/crypto/cast6_generic.ko \
 	$(LINUX_DIR)/crypto/khazad.ko \
 	$(LINUX_DIR)/crypto/tea.ko \
-	$(LINUX_DIR)/crypto/tgr192.ko \
+	$(LINUX_DIR)/crypto/tgr192.ko@lt5.12 \
 	$(LINUX_DIR)/crypto/twofish_common.ko \
 	$(LINUX_DIR)/crypto/wp512.ko \
 	$(LINUX_DIR)/crypto/twofish_generic.ko \
@@ -704,7 +682,7 @@ define KernelPackage/crypto-misc
 	$(LINUX_DIR)/crypto/blowfish_generic.ko \
 	$(LINUX_DIR)/crypto/serpent_generic.ko
   AUTOLOAD:=$(call AutoLoad,10,anubis camellia_generic cast_common \
-	cast5_generic cast6_generic khazad tea tgr192 twofish_common \
+	cast5_generic cast6_generic khazad tea tgr192@lt5.12 twofish_common \
 	wp512 blowfish_common serpent_generic)
   ifndef CONFIG_TARGET_x86
 	AUTOLOAD+= $(call AutoLoad,10,twofish_generic blowfish_generic)
@@ -857,7 +835,7 @@ define KernelPackage/crypto-sha1/arm-neon
   AUTOLOAD+=$(call AutoLoad,09,sha1-arm-neon)
 endef
 
-KernelPackage/crypto-sha1/imx6=$(KernelPackage/crypto-sha1/arm-neon)
+KernelPackage/crypto-sha1/imx=$(KernelPackage/crypto-sha1/arm-neon)
 KernelPackage/crypto-sha1/ipq40xx=$(KernelPackage/crypto-sha1/arm-neon)
 KernelPackage/crypto-sha1/mvebu/cortexa9=$(KernelPackage/crypto-sha1/arm-neon)
 
@@ -921,7 +899,7 @@ define KernelPackage/crypto-sha512/arm
   AUTOLOAD+=$(call AutoLoad,09,sha512-arm)
 endef
 
-KernelPackage/crypto-sha512/imx6=$(KernelPackage/crypto-sha512/arm)
+KernelPackage/crypto-sha512/imx=$(KernelPackage/crypto-sha512/arm)
 KernelPackage/crypto-sha512/ipq40xx=$(KernelPackage/crypto-sha512/arm)
 KernelPackage/crypto-sha512/mvebu/cortexa9=$(KernelPackage/crypto-sha512/arm)
 

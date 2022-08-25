@@ -101,18 +101,42 @@ define Device/ZyXELImage
 	IMAGE/sysupgrade.bin/squashfs := append-rootfs | pad-to $$$$(BLOCKSIZE) | sysupgrade-tar rootfs=$$$$@ | append-metadata
 endef
 
-define Device/askey_rt4230w-rev6
+define Device/arris_rac2v1a
 	$(call Device/LegacyImage)
-	DEVICE_VENDOR := Askey
-	DEVICE_MODEL := RT4230W
-	DEVICE_VARIANT := REV6
+	DEVICE_VENDOR := Arris
+	DEVICE_MODEL := RAC2V1A
+	DEVICE_ALT0_VENDOR := Arris
+	DEVICE_ALT0_MODEL := TR4400-AC
 	SOC := qcom-ipq8065
 	BLOCKSIZE := 128k
 	PAGESIZE := 2048
-	DEVICE_PACKAGES := ath10k-firmware-qca9984-ct
 	KERNEL_IN_UBI := 1
+	DEVICE_PACKAGES := ath10k-firmware-qca9984-ct ath10k-firmware-qca99x0-ct
+endef
+TARGET_DEVICES += arris_rac2v1a
+
+define Device/askey_rt4230w
+	$(call Device/LegacyImage)
+	DEVICE_VENDOR := Askey
+	DEVICE_MODEL := RT4230W
+	SOC := qcom-ipq8065
+	BLOCKSIZE := 128k
+	PAGESIZE := 2048
+	KERNEL_IN_UBI := 1
+	DEVICE_PACKAGES := ath10k-firmware-qca9984-ct
+endef
+
+define Device/askey_rt4230w-rev6
+	$(call Device/askey_rt4230w)
+	DEVICE_VARIANT := REV6
 endef
 TARGET_DEVICES += askey_rt4230w-rev6
+
+define Device/askey_rt4230w-rev9.3
+	$(call Device/askey_rt4230w)
+	DEVICE_VARIANT := REV9.3
+endef
+TARGET_DEVICES += askey_rt4230w-rev9.3
 
 define Device/asrock_g10
 	$(call Device/FitImage)
@@ -403,6 +427,37 @@ define Device/ruijie_rg-mtfi-m520
 	kmod-fs-ext4 kmod-fs-f2fs kmod-rtc-pcf8563 losetup mkf2fs
 endef
 TARGET_DEVICES += ruijie_rg-mtfi-m520
+
+define Device/norton_core-518
+	DEVICE_TITLE := Norton Core 518
+	BOARD_NAME := core-518
+	SOC := qcom-ipq8065
+	DEVICE_DTS := qcom-ipq8065-core-518
+	BLOCKSIZE := 64k
+	KERNEL_SIZE := 4096k
+	KERNEL_SUFFIX := -uImage
+	KERNEL = kernel-bin | append-dtb | uImage none | pad-to $${KERNEL_SIZE}
+	KERNEL_NAME := zImage
+	SUPPORTED_DEVICES += core-518
+	DEVICE_PACKAGES := ath10k-firmware-qca9984-ct e2fsprogs kmod-fs-ext4 losetup f2fs-tools
+	IMAGES := mmcblk0p10-rootfs.bin mmcblk0p9-kernel.bin sysupgrade.bin
+	IMAGE/sysupgrade.bin/squashfs := append-rootfs | pad-to $$$${BLOCKSIZE} | sysupgrade-tar rootfs=$$$$@ | append-metadata
+	IMAGE/mmcblk0p9-kernel.bin := pad-extra 40 | append-kernel | pad-to $$$${KERNEL_SIZE}
+	IMAGE/mmcblk0p10-rootfs.bin := append-rootfs | pad-rootfs
+endef
+TARGET_DEVICES += norton_core-518
+
+define Device/surf_g-nat200
+	$(call Device/LegacyImage)
+	DEVICE_VENDOR := SURF
+	DEVICE_MODEL := G-NAT200
+	SOC := qcom-ipq8064
+	BLOCKSIZE := 128k
+	PAGESIZE := 2048
+	IMAGE_SIZE := 26624k
+	IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | append-metadata
+endef
+TARGET_DEVICES += surf_g-nat200
 
 define Device/tplink_ad7200
 	$(call Device/TpSafeImage)

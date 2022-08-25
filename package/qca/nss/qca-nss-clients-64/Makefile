@@ -7,7 +7,7 @@ PKG_SOURCE_URL:=https://source.codeaurora.org/quic/cc-qrdk/oss/lklm/nss-clients
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_DATE:=2021-04-29
 PKG_SOURCE_VERSION:=b93c72c1b72c591c2ddc2f0b24f0e2b457720118
-PKG_MIRROR_HASH:=9fab23da994bfbac9a3cef32cdfec31a87a03ed415f36bc926da32b7b0934259
+PKG_MIRROR_HASH:=fbfba64a364b095ea7c9a24cd7af96b63ab0bc29c179e1628c675aa223c0d063
 
 include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
@@ -26,6 +26,34 @@ define KernelPackage/qca-nss-drv-pppoe-64/Description
 Kernel modules for NSS connection manager - Support for PPPoE
 endef
 
+define KernelPackage/qca-nss-drv-bridge-mgr-64
+  SECTION:=kernel
+  CATEGORY:=Kernel modules
+  SUBMENU:=Network Devices
+  TITLE:=Kernel driver for NSS bridge manager
+  DEPENDS:=@LINUX_5_10 @TARGET_ipq807x +kmod-qca-nss-drv-64 +kmod-qca-nss-drv-vlan-mgr-64
+  FILES:=$(PKG_BUILD_DIR)/bridge/qca-nss-bridge-mgr.ko
+  AUTOLOAD:=$(call AutoLoad,51,qca-nss-bridge-mgr)
+endef
+
+define KernelPackage/qca-nss-drv-bridge-mgr-64/Description
+Kernel modules for NSS bridge manager
+endef
+
+define KernelPackage/qca-nss-drv-vlan-mgr-64
+  SECTION:=kernel
+  CATEGORY:=Kernel modules
+  SUBMENU:=Network Devices
+  TITLE:=Kernel driver for NSS vlan manager
+  DEPENDS:=@LINUX_5_10 @TARGET_ipq807x +kmod-qca-nss-drv-64
+  FILES:=$(PKG_BUILD_DIR)/vlan/qca-nss-vlan.ko
+  AUTOLOAD:=$(call AutoLoad,51,qca-nss-vlan)
+endef
+
+define KernelPackage/qca-nss-drv-vlan-mgr-64/Description
+Kernel modules for NSS vlan manager
+endef
+
 EXTRA_CFLAGS+= \
 	-I$(STAGING_DIR)/usr/include/qca-nss-drv \
 	-I$(STAGING_DIR)/usr/include/qca-nss-crypto \
@@ -37,6 +65,14 @@ EXTRA_CFLAGS+= \
 
 ifneq ($(CONFIG_PACKAGE_kmod-qca-nss-drv-pppoe-64),)
 NSS_CLIENTS_MAKE_OPTS+=pppoe=y
+endif
+
+ifneq ($(CONFIG_PACKAGE_kmod-qca-nss-drv-bridge-mgr-64),)
+NSS_CLIENTS_MAKE_OPTS+=bridge-mgr=y
+endif
+
+ifneq ($(CONFIG_PACKAGE_kmod-qca-nss-drv-vlan-mgr-64),)
+NSS_CLIENTS_MAKE_OPTS+=vlan-mgr=y
 endif
 
 ifeq ($(CONFIG_TARGET_BOARD), "ipq807x")
@@ -57,3 +93,5 @@ define Build/Compile
 endef
 
 $(eval $(call KernelPackage,qca-nss-drv-pppoe-64))
+$(eval $(call KernelPackage,qca-nss-drv-bridge-mgr-64))
+$(eval $(call KernelPackage,qca-nss-drv-vlan-mgr-64))

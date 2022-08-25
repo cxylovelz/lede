@@ -7,7 +7,7 @@ PKG_SOURCE_URL:=https://source.codeaurora.org/quic/cc-qrdk/oss/lklm/qca-nss-ecm
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_DATE:=2021-04-29
 PKG_SOURCE_VERSION:=c115aec34867b582e2e5ea79fc5315971e0e953c
-PKG_MIRROR_HASH:=a772996af7bbae7031eebc2f789431d29be67f11eb0a1e874c08b74eec6f4585
+PKG_MIRROR_HASH:=962385b45daa2e552a15018bf2930c2df1f6f575d885375bf935a142b4255da5
 
 PKG_BUILD_PARALLEL:=1
 
@@ -47,7 +47,6 @@ define KernelPackage/qca-nss-ecm-64/install
 	$(INSTALL_DATA) ./files/qca-nss-ecm.uci $(1)/etc/config/ecm
 	$(INSTALL_DATA) ./files/qca-nss-ecm.defaults $(1)/etc/uci-defaults/99-qca-nss-ecm
 	$(INSTALL_BIN) ./files/qca-nss-ecm.sysctl $(1)/etc/sysctl.d/qca-nss-ecm.conf
-	echo 'net.netfilter.nf_conntrack_max=8192' >> $(1)/etc/sysctl.d/qca-nss-ecm.conf
 endef
 
 EXTRA_CFLAGS+=-I$(STAGING_DIR)/usr/include/qca-nss-drv
